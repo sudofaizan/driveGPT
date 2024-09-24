@@ -22,11 +22,11 @@ const int BUZZ = 7;
 const int RELAY = 6;
 
 void checkcar(){
-    btm.println("ATZ"); // Send "AT" command
-  delay(300);
-  String response = btm.readStringUntil('\n');
+btm.println("ATZ"); // Send "AT" command
+delay(300);
+String response = btm.readStringUntil('\n');
 response.trim();
-  Serial.println(response);
+Serial.println(response);
 
 if (response.indexOf("ELM327 v1.5") != -1) {
   Serial.println("car detected");
@@ -57,25 +57,19 @@ if (response.indexOf("ELM327 v1.5") != -1) {
     while (1);
   }
 
-
-
-
 } else {
   digitalWrite(BUZZ, 1);
   Serial.println("car not found");
-        lcd.clear();
+      lcd.clear();
       lcd.setCursor(0,0);
-    lcd.print("CAR Not FOuNd");
+      lcd.print("CAR Not FOuNd");
       lcd.setCursor(0,1);
       lcd.print("Searching...");
   digitalWrite(BUZZ, 0);
-    checkcar();
-
-
+  checkcar();
 }
 }
 void setup() {
-
   Serial.begin(9600);
   btm.begin(38400);
   pinMode(LED_BLUE, OUTPUT); //Blue led 
@@ -104,7 +98,6 @@ void setup() {
   delay(50); // Allow device to respond
   String response = btm.readStringUntil('\n'); // Read response
   response.trim(); // Remove leading/trailing whitespace
-    // Serial.println(response);
 
 if (response.endsWith("OK")) {
   Serial.println("got ok back");
@@ -131,25 +124,22 @@ if (response.endsWith("OK")) {
   Serial.println("Connection failed");
 }
 }
-
 void loop()
 {
-
   float tempLOAD = myELM327.engineLoad();
   float tempRPM = myELM327.rpm();
-  // float tempTEMP = myELM327.engineCoolantTemp();
+  float tempTEMP = myELM327.engineCoolantTemp();
 
   if (myELM327.nb_rx_state == ELM_SUCCESS)
   {
     rpm = (uint32_t)tempRPM;
     load = (uint32_t)tempLOAD;
-    // temp = (uint32_t)tempTEMP;
+    temp = (uint32_t)tempTEMP;
 
     if (load > 60)
     {
         digitalWrite(BUZZ, 1);
         digitalWrite(RELAY, 1);
-
     }
     else{
         digitalWrite(BUZZ, 0);
@@ -160,22 +150,28 @@ void loop()
     {
         digitalWrite(BUZZ, 1);
         digitalWrite(RELAY, 1);
-
     }
     else{
         digitalWrite(BUZZ, 0);
         digitalWrite(RELAY, 0);
-
     }
     Serial.print("RPM: "); Serial.println(rpm);
-    Serial.print("TEMP: "); Serial.println(load);
-      lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print(rpm);
-  lcd.setCursor(0,1);
-  lcd.print(load);
+    Serial.print("LOAD: "); Serial.println(load);
+    Serial.print("TEMP: "); Serial.println(temp);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("RPM:");
+    lcd.setCursor(5,0);
+    lcd.print(rpm);
+    lcd.setCursor(0,1);
+    lcd.print("LOAD:");
+    lcd.setCursor(5,1);
+    lcd.print(load);
+    lcd.setCursor(8,1);
+    lcd.print("T:");
+    lcd.setCursor(10,1);
+    lcd.print(temp);
   }
   else if (myELM327.nb_rx_state != ELM_GETTING_MSG)
     myELM327.printError();
-
 }
