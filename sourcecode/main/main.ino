@@ -19,6 +19,8 @@ const int BTM_KEY = 9;
 const int BTM_RX = 11;
 const int BTM_TX = 10;
 const int BUZZ = 7;
+const int RELAY = 6;
+
 void checkcar(){
     btm.println("ATZ"); // Send "AT" command
   delay(300);
@@ -63,7 +65,9 @@ if (response.indexOf("ELM327 v1.5") != -1) {
   Serial.println("car not found");
         lcd.clear();
       lcd.setCursor(0,0);
-    lcd.print("CAR Not FOund");
+    lcd.print("CAR Not FOuNd");
+      lcd.setCursor(0,1);
+      lcd.print("Searching...");
   digitalWrite(BUZZ, 0);
     checkcar();
 
@@ -71,9 +75,11 @@ if (response.indexOf("ELM327 v1.5") != -1) {
 }
 }
 void setup() {
+
   Serial.begin(9600);
   btm.begin(38400);
   pinMode(LED_BLUE, OUTPUT); //Blue led 
+  pinMode(RELAY, OUTPUT); //Blue led 
   pinMode(LED_YELLOW, OUTPUT); //Yello led
   pinMode(BTM, OUTPUT);  //BTM
   pinMode(BTM_KEY, OUTPUT);  //BTM key
@@ -82,6 +88,12 @@ void setup() {
   lcd.init();
   // turn on the backlight
   lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("DriveGPT by ");
+  lcd.setCursor(0,1);
+  lcd.print("Faizan");
+  delay(2000);
+  lcd.clear();
   digitalWrite(BTM, 1);
   digitalWrite(BTM_KEY, 1);
   lcd.setCursor(0,0);
@@ -136,16 +148,24 @@ void loop()
     if (load > 60)
     {
         digitalWrite(BUZZ, 1);
+        digitalWrite(RELAY, 1);
+
     }
     else{
         digitalWrite(BUZZ, 0);
+        digitalWrite(RELAY, 0);
+
     }
     if (rpm > 2200)
     {
         digitalWrite(BUZZ, 1);
+        digitalWrite(RELAY, 1);
+
     }
     else{
         digitalWrite(BUZZ, 0);
+        digitalWrite(RELAY, 0);
+
     }
     Serial.print("RPM: "); Serial.println(rpm);
     Serial.print("TEMP: "); Serial.println(load);
