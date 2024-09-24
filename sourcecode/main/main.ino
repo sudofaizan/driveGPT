@@ -6,7 +6,7 @@
 SoftwareSerial btm(11, 10); // RX, TX init onboard btm
 #define ELM_PORT btm
 uint32_t rpm = 0;
-
+uint32_t temp = 0;
 uint32_t load = 0;
 bool connected = false;
 ELM327 myELM327;
